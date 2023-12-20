@@ -20,7 +20,7 @@ jobs:
     container: droptica/phpstan
 
     env:
-      STATIC_ANALYSIS_TOOL_PATH: "turbo-drupal.* src/ modules/custom/ themes/custom/"
+      STATIC_ANALYSIS_TOOL_PATH: "web/modules/custom/ web/themes/custom/"
       STATIC_ANALYSIS_TOOL_IGNORE: "*md,*.css,*.txt,*.info,*interactive_ui/react_slider/js*,*pl-sk/*,*pattern-lab/*,*_twig-components/*"
       STATIC_ANALYSIS_TOOL_EXTENSIONS: "php,inc,install,module,test,profile,theme"
 
