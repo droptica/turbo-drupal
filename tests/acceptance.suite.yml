@@ -1,0 +1,20 @@
+# Codeception Test Suite Configuration
+#
+# Suite for acceptance tests.
+# Perform tests in browser using the WebDriver or PhpBrowser.
+# If you need both WebDriver and PHPBrowser tests - create a separate suite.
+
+actor: AcceptanceTester
+modules:
+    enabled:
+        - PhpBrowser:
+            url: http://web/
+            verify: false
+            curl:
+              CURLOPT_TIMEOUT: 1200
+              CURLOPT_SSL_VERIFYHOST: 0
+              CURLOPT_SSL_VERIFYPEER: 0
+        - \Helper\Acceptance
+        - DrupalBootstrap:
+            root: '/var/www/html/web'
+step_decorators: ~

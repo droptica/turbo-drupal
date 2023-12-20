@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+# Prepare some colors.
+aqua=$(tput -T xterm-256color setaf 14)
+no_color=$(tput -T xterm-256color sgr0)
+
+# Add info about restoring.
+printf "%s[%s] %sImporting the files...\n" "${aqua}" "${DDEV_SITENAME^}" "${no_color}"
+
+# Create function for restoring files.
+restore_files() {
+  # Check if files archive exists.
+  if [ -f "${DDEV_APPROOT}/.ddev/file-dumps/$1" ]; then
+    # Remove all current files.
+    rm -rf "${DDEV_APPROOT}"/web/sites/default/files/*
+
+    # Extra new ones.
+    tar -xf "${DDEV_APPROOT}"/.ddev/file-dumps/"$1" -C "${DDEV_APPROOT}"/web/sites/default
+
+    # Check if drush is successfully installed (if not this should be first build).
+    if [ -f "${DDEV_APPROOT}/vendor/bin/drush" ]; then
+      # Clear drupal cache after our little modification.
+      ddev drush cr > /dev/null 2>&1
+    fi
+
+    # Add info about successful unpacking of all files.
+    printf "%s[%s] %sFiles have been successfully imported!\n" "${aqua}" "${DDEV_SITENAME^}" "${no_color}"
+
+    # We do not need to continue.
+    exit 0;
+  fi
+
+  # Add info about non-existing files.
+  printf "%s[%s] %sWe couldn't find any '%s' archive, skipping files-import...\n" "${aqua}" "${DDEV_SITENAME^}" "${no_color}" "$1"
+}
+
+# Check if users passed one argument.
+if [ "$#" -ne 1 ]; then
+  # Restore default files.
+  restore_files "files.tar.gz"
+else
+  # Restore user given files.
+  restore_files "$1"
+fi
