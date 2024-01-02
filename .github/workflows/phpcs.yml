@@ -24,4 +24,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Verify coding standards
-        run: phpcs  --standard=../../phpcs.xml ../../web/modules/custom ../../web/themes/custom
+        run: phpcs  --standard=../../phpcs.xml ./web/modules/custom ./web/themes/custom
