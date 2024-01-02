@@ -19,14 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     container: droptica/phpstan
 
-    env:
-      STATIC_ANALYSIS_TOOL_PATH: "web/modules/custom/ web/themes/custom/"
-      STATIC_ANALYSIS_TOOL_IGNORE: "*md,*.css,*.txt,*.info,*interactive_ui/react_slider/js*,*pl-sk/*,*pattern-lab/*,*_twig-components/*"
-      STATIC_ANALYSIS_TOOL_EXTENSIONS: "php,inc,install,module,test,profile,theme"
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Create symlink
+        run: ln -s "$(pwd)" /opt/project
 
       - name: Static analysis tool
-        run: phpstan ${{ env.STATIC_ANALYSIS_TOOL_PATH }} --ignore=${{ env.STATIC_ANALYSIS_TOOL_IGNORE }} --extensions=${{ env.STATIC_ANALYSIS_TOOL_EXTENSIONS}} --standard=Drupal,DrupalPractice --report=full,gitblame
+        run: phpstan analyse -c ../../phpstan.neon --no-progress
