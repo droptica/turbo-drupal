@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0 # important!
 
       - name: Install Composer dependencies
-        uses: php-actions/composer@v6
+        run: composer install --no-scripts --no-progress --no-suggest
 
       - name: Run Code sniffer
         run: vendor/bin/phpcs --standard=phpcs.xml
