@@ -30,12 +30,14 @@
 		"drupal/gin": "^3.0@RC",
 		"drupal/security_review": "^2.0",
 		"drupal/site_audit": "^4.0@RC",
-		"drush/drush": "^12"
+		"drush/drush": "^12",
+		"mglaman/drupal-check": "^1.4"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
 		"drupal/coder": "^8.3",
 		"drupal/config_inspector": "^2.1",
+		"ekino/phpstan-banned-code": "^1.0",
 		"mglaman/phpstan-drupal": "*",
 		"phpstan/phpstan": "*"
 	},
