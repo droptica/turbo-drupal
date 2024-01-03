@@ -6,6 +6,8 @@ use Drupal\Core\Url;
 use Drupal\Component\Utility\Html;
 
 function admin_toolbar_toolbar_alter(&$items) {
+  $test = "test";
+  $test = $test * 2;
   $items['administration']['tray']['toolbar_administration']['#pre_render'] = [
     [AdminToolbar::class, 'preRenderTray'],
   ];
