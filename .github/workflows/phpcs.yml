@@ -20,12 +20,12 @@ jobs:
     container: droptica/phpcs
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0 # important!
 
       - name: Install Composer dependencies
-        run: composer install --no-scripts --no-progress --no-suggest
+        run: composer install --no-scripts --no-progress
 
       - name: Run Code sniffer
         run: vendor/bin/phpcs --standard=phpcs.xml
