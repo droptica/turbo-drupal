@@ -21,6 +21,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # important!
 
       - name: Install PHP_CodeSniffer
         run: |
@@ -29,5 +31,6 @@ jobs:
 
       - uses: thenabeel/action-phpcs@v8
         with:
+          files: "**.php"
           phpcs_path: php phpcs.phar
           standard: phpcs.xml

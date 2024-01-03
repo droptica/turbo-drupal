@@ -13,15 +13,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  Phpstan:
+  Verify:
     name: "Static analysis tool"
 
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: php-actions/composer@v6
-      - name: PHPStan Static Analysis
-        uses: php-actions/phpstan@v3
-        with:
-          configuration: ../../phpstan.neon
+    - uses: actions/checkout@v3
+    - uses: php-actions/composer@v6
+    - uses: php-actions/phpstan@v3
+      with:
+        configuration: phpstan.neon
