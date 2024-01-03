@@ -13,16 +13,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  Verify:
-    name: "Static analysis tool"
+  phpstan:
+    name: "PHPStan Static analysis tool"
 
     runs-on: ubuntu-latest
-    container: droptica/phpstan
 
     steps:
     - uses: actions/checkout@v3
+    - name: Install Composer dependencies
+      run: composer install --no-scripts --no-progress --no-suggest
 
-    - name: PHPStan Static Analysis
-      uses: php-actions/phpstan@v3
-      with:
-        configuration: phpstan.neon
+    - name: Run PHPStan
+      run: vendor/bin/phpstan analyse --configuration=phpstan.neon

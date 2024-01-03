@@ -24,9 +24,8 @@ jobs:
         with:
           fetch-depth: 0 # important!
 
-      - name: Run PHP CodeSniffer
-        run: |
-          docker run --rm \
-            -v ${{ github.workspace }}:/web \
-            droptica/phpcs \
-            phpcs --standard=./phpcs.xml
+      - name: Install Composer dependencies
+        uses: php-actions/composer@v6
+
+      - name: Run Code sniffer
+        run: vendor/bin/phpcs --standard=phpcs.xml
