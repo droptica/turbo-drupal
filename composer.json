@@ -18,6 +18,8 @@
 		}
 	],
 	"require": {
+		"codeception/codeception": "^5.0",
+		"codeception/visualception": "^5.0",
 		"composer/installers": "^2.0",
 		"cweagans/composer-patches": "^1.7",
 		"droptica/codeception-package": "^10.8",
@@ -33,7 +35,9 @@
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
 		"drupal/coder": "^8.3",
-		"drupal/config_inspector": "^2.1"
+		"drupal/config_inspector": "^2.1",
+		"mglaman/phpstan-drupal": "*",
+		"phpstan/phpstan": "*"
 	},
 	"minimum-stability": "dev",
 	"prefer-stable": true,

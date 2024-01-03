@@ -22,11 +22,5 @@ jobs:
     - name: Install Composer dependencies
       run: composer install --no-scripts --no-progress
 
-    - name: Install PHPStan as a dev dependency
-      run: composer require --dev phpstan/phpstan
-
-    - name: Install PHPStan and required extensions
-      run: composer require --dev phpstan/phpstan mglaman/phpstan-drupal
-
     - name: Run PHPStan
       run: vendor/bin/phpstan analyse --configuration=phpstan.neon
