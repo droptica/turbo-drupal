@@ -24,5 +24,8 @@ jobs:
       - name: Install composer dependencies
         run: composer install --ignore-platform-reqs --no-scripts --no-progress
 
+      - name: Workaround for phpstan.neon absolute paths
+        run: ln -s "$(pwd)" /opt/project
+
       - name: Analyse coding standards
-        run: phpstan analyse -c="/opt/project/phpstan.neon"
+        run: phpstan analyse -c ./phpstan.neon --no-progress
