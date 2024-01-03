@@ -9,8 +9,6 @@ on:
   pull_request:
     paths-ignore:
       - '**.md'
-  # Allow manually triggering the workflow.
-  workflow_dispatch:
 
 jobs:
   phpstan:
@@ -19,7 +17,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v2
+
     - name: Install Composer dependencies
       run: composer install --no-scripts --no-progress
 
