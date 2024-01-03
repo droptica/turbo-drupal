@@ -19,15 +19,15 @@ jobs:
     runs-on: ubuntu-latest
     container: droptica/phpcs
 
-    env:
-      CODE_SNIFFER_PATH: "web/modules/custom/ web/themes/custom/"
-      CODE_SNIFFER_IGNORE: "*md,*.css,*.txt,*.info,*interactive_ui/react_slider/js*,*pl-sk/*,*pattern-lab/*,*_twig-components/*"
-      CODE_SNIFFER_EXTENSIONS: "php,inc,install,module,info,test,profile,theme"
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - run: phpcs ${{ env.CODE_SNIFFER_PATH }} --ignore=${{ env.CODE_SNIFFER_IGNORE }} --extensions=${{ env.CODE_SNIFFER_EXTENSIONS}} --standard=Drupal,DrupalPractice --report=full,gitblame
+      - name: Install PHP_CodeSniffer
+        run: |
+          curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
+          php phpcs.phar --version
+
+      - uses: thenabeel/action-phpcs@v8
         with:
-          standard: ../../phpcs.xml
+          phpcs_path: php phpcs.phar
+          standard: phpcs.xml
