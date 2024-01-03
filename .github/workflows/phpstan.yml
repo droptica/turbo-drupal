@@ -17,10 +17,10 @@ jobs:
     name: "Static analysis tool"
 
     runs-on: ubuntu-latest
+    container: droptica/phpstan
 
     steps:
     - uses: actions/checkout@v3
-    - uses: php-actions/composer@v6
 
     - name: PHPStan Static Analysis
       uses: php-actions/phpstan@v3
