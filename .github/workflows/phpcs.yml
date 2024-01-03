@@ -1,0 +1,28 @@
+name: Drupal coding standards
+
+on:
+  # Run on all pushes and on all pull requests.
+  # Prevent the build from running when there are only irrelevant changes.
+  push:
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  phpcs:
+    name: "Verify Drupal coding standards"
+
+    runs-on: ubuntu-latest
+    container: droptica/phpcs
+
+    env:
+      CODE_SNIFFER_PATH: "web/modules/custom/ web/themes/custom/"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Verify coding standards
+        run: phpcs ${{ env.CODE_SNIFFER_PATH }} --standard=phpcs.xml
