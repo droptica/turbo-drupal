@@ -13,15 +13,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  Verify:
+  Phpstan:
     name: "Static analysis tool"
 
     runs-on: ubuntu-latest
     container: droptica/phpstan
 
     steps:
-      - name: Create symlink
-        run: ln -s "$(pwd)" /opt/project
-
-      - name: Static analysis tool
-        run: phpstan analyse -c ../../phpstan.neon --no-progress
+      - name: PHPStan Static Analysis
+        uses: php-actions/phpstan@v3
+        with:
+          configuration: ../../phpstan.neon
+          memory_limit: 256M
