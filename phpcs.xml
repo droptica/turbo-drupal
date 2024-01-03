@@ -7,8 +7,8 @@
 
     <config name="installed_paths" value="../../drupal/coder/coder_sniffer/Drupal,../../drupal/coder/coder_sniffer/DrupalPractice,../../slevomat/coding-standard" />
 
-    <file>/web/modules/custom</file>
-    <file>/web/themes/custom</file>
+    <file>web/modules/custom/</file>
+    <file>web/themes/custom/</file>
 
     <!-- Exclude third party libraries. -->
     <exclude-pattern>/.ddev</exclude-pattern>
