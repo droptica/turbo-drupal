@@ -22,13 +22,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: php-actions/composer@v6
 
-    - name: Get custom PHAR
-      run: |
-        curl --silent -H "User-agent: cURL (https://github.com/php-actions)" -L \
-        "https://www.getrelease.download/phpstan/phpstan/1.8.11/phar" > phpstan.phar
-
     - name: PHPStan Static Analysis
       uses: php-actions/phpstan@v3
       with:
         configuration: phpstan.neon
-        vendored_phpstan_path: custom-phpstan.phar
