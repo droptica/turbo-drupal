@@ -27,5 +27,4 @@ jobs:
       - name: Install Composer dependencies
         run: composer install
 
-      - uses: thenabeel/action-phpcs@v8
-        run: vendor/bin/phpcs --standard=phpcs.xml
+      - run: vendor/bin/phpcs --standard=phpcs.xml
