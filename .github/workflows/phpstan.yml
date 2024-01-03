@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install composer dependencies
-        run: composer install --no-scripts --no-progress
+        run: composer install --ignore-platform-reqs --no-scripts --no-progress
 
       - name: Analyse coding standards
         run: phpstan analyse -c="/opt/project/phpstan.neon"
