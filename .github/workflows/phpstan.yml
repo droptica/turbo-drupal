@@ -15,6 +15,7 @@ on:
 jobs:
   Phpstan:
     name: "Static analysis tool"
+    container: droptica/phpstan
 
     runs-on: ubuntu-latest
 
