@@ -1,0 +1,54 @@
+<?php
+
+use Drupal\admin_toolbar\Render\Element\AdminToolbar;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+use Drupal\Component\Utility\Html;
+
+function admin_toolbar_toolbar_alter(&$items) {
+  $items['administration']['tray']['toolbar_administration']['#pre_render'] = [
+    [AdminToolbar::class, 'preRenderTray'],
+  ];
+  $items['administration']['#attached']['library'][] = 'admin_toolbar/toolbar.tree';
+  $hoverintent_functionality = \Drupal::config('admin_toolbar_tools.settings')->get('hoverintent_functionality');
+  if ($hoverintent_functionality === TRUE) {
+    // Use jQuery hover() effect.
+    $items['administration']['#attached']['library'][] = 'admin_toolbar/toolbar.tree.hoverintent';
+  }
+  else {
+    // User hoverIntent plugin.
+    $items['administration']['#attached']['library'][] = 'admin_toolbar/toolbar.tree.hover';
+  }
+}
+
+function admin_toolbar_help($route_name, $route_match) {
+  switch ($route_name) {
+    case 'help.page.admin_toolbar':
+      $variables = [
+        ':toolbar' => Url::fromRoute('help.page', ['name' => 'toolbar'])->toString(),
+        ':automated_cron' => (\Drupal::moduleHandler()->moduleExists('automated_cron')) ? Url::fromRoute('help.page', ['name' => 'automated_cron'])->toString() : '#',
+      ];
+      $output = '';
+      $output .= '<h3>'.t('About') . '</h3>';
+      $output .= '<p>' . t('The Admin Toolbar module enhances the <a href=":toolbar">Toolbar</a> module by providing fast access to all the administrative links at the top of your site. Admin Toolbar remains a very "lightweight" module by closely integrating with all Toolbar functionality. It can be used in conjunction with all the sub modules included on Admin Toolbar, for quick access to system commands such as Flush all caches, <a href=":automated_cron">Run cron</a>, Run Updates, etc.', $variables) . '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<p>' . t('The Admin Toolbar greatly improves the user experience for those who regularly interact with the site Toolbar by providing fast, full access to all links in the site Toolbar without having to click to get there.') . '</p>';
+      return $output;
+  }
+}
+
+function toolbar_tools_menu_navigation_links($tree) {
+  foreach ($tree as $element) {
+    if ($element->subtree) {
+      toolbar_tools_menu_navigation_links($element->subtree);
+    }
+    $link = $element->link;
+    // Get the non-localized title to make the icon class.
+    $definition = $link->getPluginDefinition();
+    $element->options['attributes']['class'][] = 'toolbar-icon';
+    $string = strtolower(str_replace(['.', ' ', '_'], ['-', '-', '-'], $definition['id']));
+    $element->options['attributes']['class'][] = Html::cleanCssIdentifier('toolbar-icon-' . $string);
+    $element->options['attributes']['title'] = $link->getDescription();
+  }
+  return $tree;
+}
