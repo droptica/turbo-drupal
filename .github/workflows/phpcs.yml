@@ -24,4 +24,12 @@ jobs:
         with:
           fetch-depth: 0 # important!
 
-      - run: vendor/bin/phpcs --standard=phpcs.xml
+      - name: Copy phpcs.xml to container
+        run: docker cp ./phpcs.xml $(docker ps -q -f "ancestor=droptica/phpcs"):/ruleset.xml
+
+      - name: Run PHP CodeSniffer
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/web \
+            droptica/phpcs \
+            phpcs --standard=/ruleset.xml
