@@ -1,0 +1,28 @@
+name: Drupal static analysis tool
+
+on:
+  # Run on all pull requests.
+  # Prevent the build from running when there are only irrelevant changes.
+  pull_request:
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  phpstan:
+    name: "Analyse Drupal coding standards"
+
+    runs-on: ubuntu-latest
+    container: droptica/phpstan
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install composer dependencies
+        run: composer install --ignore-platform-reqs --no-scripts --no-progress
+
+      - name: Workaround for phpstan.neon absolute paths
+        run: ln -s "$(pwd)" /opt/project
+
+      - name: Analyse coding standards
+        run: phpstan analyse -c ./phpstan.neon --no-progress
