@@ -141,12 +141,13 @@ ddev auto-update
 
 Documentation: [README](./tests/README.md).
 
-## Bitbucket pipelines
+## Github Actions and Bitbucket Pipelines
 
-This template contains the base configuration of the bitbucket pipelines.
-See the `bitbucket-pipelines.yml` file.
+This template contains the base configuration of the github actions and
+bitbucket pipelines to check quality of your code with the PHP CodeSniffer and
+PHP Stan tools.
 
-Base usage doesn't need any configuration, just enable pipelines in your
+Base usage doesn't need any configuration, just enable actions/pipelines in your
 repository settings.
 
 # Project documentation
