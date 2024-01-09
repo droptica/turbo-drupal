@@ -1,48 +1,66 @@
 # Smoke tests for Drupal 8/9/10
 
-## Structure
+1. Run `composer require --dev droptica/codeception-package`.
+2. Add `codeception.yml` to your project directory.
+
 ```yml
+actor: Tester
+namespace: Tests
+support_namespace: Support
 paths:
-    tests: tests
-    output: tests/_output
-    data: tests/_data
-    support: tests/_support
-    envs: tests/_envs
+  tests: tests
+  output: tests/_output
+  data: tests/Support/Data
+  support: tests/Support
+  envs: tests/_envs
 actor_suffix: Tester
+settings:
+  colors: true
+  memory_limit: 1024M
+  strict_xml: true
 extensions:
-    enabled:
-        - Codeception\Extension\RunFailed
+  enabled:
+    - Codeception\Extension\RunFailed
 ```
 
-## Configuration
-
-Go to the `tests/acceptance.suite.yml` file and make sure that the `url` and `root` parameters are correct
+3. Copy the contents of this repository to the `tests` directory in your project root.
+4. Configure `tests/Acceptance.suite.yml` if your Docker host is not `web`
+5. Configure content types, vocabularies and URLs in `tests/Acceptance/BaseResponseCodeTestCest.php`\
+6. Add autoload definition to `composer.json` after require-dev section:
 
 ```json
-modules:
-    enabled:
-        - PhpBrowser:
-            url: http://web/
-        - DrupalBootstrap:
-            root: '/var/www/html/web'
+"autoload-dev": {
+  "psr-4": {
+    "Tests\\": "tests/"
+  }
+},
 ```
 
-Configure content types, vocabularies and URLs in `tests/acceptance/BaseResponseCodeTestCest.php`
+# Configure with DDEV
 
-## Running tests
+### Add "tests" file to .ddev/commands/web
 
-To execute all acceptance tests run:
+```bash
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+  codecept run Acceptance --html --xml
+else
+  codecept run $@ --html --xml
+fi
+```
+
+### Running tests
+
+To execute all acceptance tests:
 
 ```bash
 ddev tests
+ddev tests Acceptance
 ```
 
-You can select the test to run by:
+Or you can select the test to run by:
 
 ```bash
-ddev tests acceptance AnonymousResponseCodeTestCest
+ddev tests Acceptance AnonymousResponseCodeTestCest
 ```
-
-## Update the default tests package
-
-At the begging of the project, get the latest tests templates from [droptica/codeception_smoke_test](https://bitbucket.org/droptica/codeception_smoke_test/src/master/).

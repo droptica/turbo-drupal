@@ -1,13 +1,14 @@
 <?php
 
-namespace Step;
+namespace Tests\Support\Step;
 
-use Drupal\Pages\UserLoginPage;
-use Drupal\Pages\HomePage;
+use Tests\Support\AcceptanceTester;
+use Tests\Support\Drupal\Pages\HomePage;
+use Tests\Support\Drupal\Pages\UserLoginPage;
 
 /**
  * Class UserCommonSteps
- * @package Step
+ * @package Tests\Support\Step
  */
 trait UserCommonSteps
 {
@@ -15,13 +16,11 @@ trait UserCommonSteps
      * Login user.
      *
      * @param string $username
-     *   Username.
      * @param string $password
-     *   Password.
      */
     public function login($username = 'admin', $password = '123')
     {
-        /** @var \JSCapableTester $I */
+        /** @var AcceptanceTester $I */
         $I = $this;
         $I->amOnPage(UserLoginPage::route());
         $url = $I->grabFromCurrentUrl();
@@ -32,7 +31,7 @@ trait UserCommonSteps
         $I->fillField(UserLoginPage::$loginFormUsername, $username);
         $I->fillField(UserLoginPage::$loginFormPassword, $password);
         $I->click('Log in', UserLoginPage::$loginFormSubmit);
-        $I->see('Admin');
+        $I->see('admin');
     }
 
     /**
@@ -40,7 +39,7 @@ trait UserCommonSteps
      */
     public function logout()
     {
-        /** @var \JSCapableTester $I */
+        /** @var AcceptanceTester $I */
         $I = $this;
         $I->amOnPage(HomePage::route());
         $I->click('#block-topmenu a:last-child');
@@ -51,7 +50,7 @@ trait UserCommonSteps
      */
     public function userIsLoggedIn()
     {
-        /** @var \JSCapableTester $I */
+        /** @var AcceptanceTester $I */
         $I = $this;
         $I->amOnPage(HomePage::route());
         $I->see('Log out');

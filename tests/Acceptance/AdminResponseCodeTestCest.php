@@ -1,12 +1,10 @@
 <?php
 
-namespace acceptance;
-
-require_once('BaseResponseCodeTestCest.php');
+namespace Tests\Acceptance;
 
 use Codeception\Example;
-use Step\Acceptance\UserSteps;
-use AcceptanceTester;
+use Tests\Support\AcceptanceTester;
+use Tests\Support\Step\Acceptance\UserSteps;
 use Symfony\Component\BrowserKit\Cookie;
 
 /**
@@ -46,8 +44,8 @@ class AdminResponseCodeTestCest extends BaseResponseCodeTestCest
 
             while ($row = $result->fetchAssoc()) {
                 $nodes[] = [
-                  'url' => $row['nid'],
-                  'bundle' => $bundle,
+                    'url' => $row['nid'],
+                    'bundle' => $bundle,
                 ];
             }
         }
@@ -72,17 +70,17 @@ class AdminResponseCodeTestCest extends BaseResponseCodeTestCest
 
             while ($row = $result->fetchAssoc()) {
                 $nodes[] = [
-                  'url' => $row['tid'],
-                  'vocabulary' => $vocabulary,
+                    'url' => $row['tid'],
+                    'vocabulary' => $vocabulary,
                 ];
             }
         }
         return $nodes;
     }
 
-  /**
-   * Provider for pages accessed as admin.
-   */
+    /**
+     * Provider for pages accessed as admin.
+     */
     protected function adminPageProvider()
     {
         $all_pages = array_merge(
@@ -92,7 +90,7 @@ class AdminResponseCodeTestCest extends BaseResponseCodeTestCest
         $pages = [];
         foreach ($all_pages as $url) {
             $pages[] = [
-              'url' => $url,
+                'url' => $url,
             ];
         }
 
@@ -109,7 +107,9 @@ class AdminResponseCodeTestCest extends BaseResponseCodeTestCest
         if (!empty($this->cookie)) {
             $I->setSessionCookie($this->cookie);
         }
-        $I->wantTo('Response Code Test on ' . $example['bundle'] . ' admin node: http://yoursite.localhost/node/' . $example['url']);
+        $I->wantTo('Response Code Test on ' . $example['bundle']
+            . ' admin node: http://yoursite.localhost/node/'
+            . $example['url']);
         $I->amOnPage('/node/' . $example['url']);
         $I->seeResponseCodeIs(200);
         $I->see('Admin');
@@ -125,7 +125,9 @@ class AdminResponseCodeTestCest extends BaseResponseCodeTestCest
      */
     public function anonymousTaxonomyResponseCodeTest(AcceptanceTester $I, Example $example)
     {
-        $I->wantTo('Response Code Test on ' . $example['vocabulary'] . ' admin node: http://yoursite.localhost/taxonomy/term/' . $example['url']);
+        $I->wantTo('Response Code Test on ' . $example['vocabulary']
+            . ' admin node: http://yoursite.localhost/taxonomy/term/'
+            . $example['url']);
         $I->amOnPage('/taxonomy/term/' . $example['url']);
         $I->seeResponseCodeIs(200);
         $I->see('Admin');
