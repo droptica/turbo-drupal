@@ -30,7 +30,7 @@ trait UserCommonSteps
         }
         $I->fillField(UserLoginPage::$loginFormUsername, $username);
         $I->fillField(UserLoginPage::$loginFormPassword, $password);
-        $I->click('Log in');
+        $I->click('Log in', UserLoginPage::$loginFormSubmit);
         $I->see('admin');
     }
 
