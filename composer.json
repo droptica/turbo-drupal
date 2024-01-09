@@ -20,7 +20,6 @@
 	"require": {
 		"composer/installers": "^2.0",
 		"cweagans/composer-patches": "^1.7",
-		"droptica/codeception-package": "^10.8",
 		"drupal/admin_toolbar": "^3.4",
 		"drupal/config_split": "^2.0",
 		"drupal/core-composer-scaffold": "^10.1.2",
@@ -32,8 +31,14 @@
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+		"droptica/codeception-package": "^10.8",
 		"drupal/coder": "^8.3",
 		"drupal/config_inspector": "^2.1"
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tests\\": "tests/"
+		}
 	},
 	"minimum-stability": "dev",
 	"prefer-stable": true,

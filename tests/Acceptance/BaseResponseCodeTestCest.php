@@ -1,6 +1,6 @@
 <?php
 
-namespace acceptance;
+namespace Tests\Acceptance;
 
 /**
  * Class BaseResponseCodeTestCest.

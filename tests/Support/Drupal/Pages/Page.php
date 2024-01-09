@@ -5,7 +5,7 @@
  * Base class to represent a page.
  */
 
-namespace Drupal\Pages;
+namespace Tests\Support\Drupal\Pages;
 
 /**
  * Class Page

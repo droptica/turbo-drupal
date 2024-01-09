@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Pages;
+namespace Tests\Support\Drupal\Pages;
 
 /**
  * Class HomePage

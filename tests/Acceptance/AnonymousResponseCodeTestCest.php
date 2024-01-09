@@ -1,11 +1,9 @@
 <?php
 
-namespace acceptance;
-
-require_once('BaseResponseCodeTestCest.php');
+namespace Tests\Acceptance;
 
 use Codeception\Example;
-use AcceptanceTester;
+use Tests\Support\AcceptanceTester;
 
 /**
  * Class AnonymousResponseCodeTestCest.
@@ -29,8 +27,8 @@ class AnonymousResponseCodeTestCest extends BaseResponseCodeTestCest
 
             while ($row = $result->fetchAssoc()) {
                 $nodes[] = [
-                  'url' => $row['nid'],
-                  'bundle' => $bundle,
+                    'url' => $row['nid'],
+                    'bundle' => $bundle,
                 ];
             }
         }
@@ -55,8 +53,8 @@ class AnonymousResponseCodeTestCest extends BaseResponseCodeTestCest
 
             while ($row = $result->fetchAssoc()) {
                 $nodes[] = [
-                  'url' => $row['tid'],
-                  'vocabulary' => $vocabulary,
+                    'url' => $row['tid'],
+                    'vocabulary' => $vocabulary,
                 ];
             }
         }
@@ -72,7 +70,7 @@ class AnonymousResponseCodeTestCest extends BaseResponseCodeTestCest
         $pages = [];
         foreach (self::ANONYMOUS_PAGES as $url) {
             $pages[] = [
-              'url' => $url,
+                'url' => $url,
             ];
         }
 
@@ -86,7 +84,9 @@ class AnonymousResponseCodeTestCest extends BaseResponseCodeTestCest
      */
     public function anonymousNodeResponseCodeTest(AcceptanceTester $I, Example $example)
     {
-        $I->wantTo('Response Code Test on ' . $example['bundle'] . ' anonymous node: http://yoursite.localhost/node/' . $example['url']);
+        $I->wantTo('Response Code Test on ' . $example['bundle']
+            . ' anonymous node: http://yoursite.localhost/node/'
+            . $example['url']);
         $I->amOnPage('/node/' . $example['url']);
         $I->seeResponseCodeIs(200);
         $I->dontSee('The website encountered an unexpected error.');
@@ -101,7 +101,9 @@ class AnonymousResponseCodeTestCest extends BaseResponseCodeTestCest
      */
     public function anonymousTaxonomyResponseCodeTest(AcceptanceTester $I, Example $example)
     {
-        $I->wantTo('Response Code Test on ' . $example['vocabulary'] . ' anonymous node: http://yoursite.localhost/taxonomy/term/' . $example['url']);
+        $I->wantTo('Response Code Test on ' . $example['vocabulary']
+            . ' anonymous node: http://yoursite.localhost/taxonomy/term/'
+            . $example['url']);
         $I->amOnPage('/taxonomy/term/' . $example['url']);
         $I->seeResponseCodeIs(200);
         $I->dontSee('The website encountered an unexpected error.');

@@ -5,7 +5,7 @@
  * Defines elements of various user account pages, such as login and register.
  */
 
-namespace Drupal\Pages;
+namespace Tests\Support\Drupal\Pages;
 
 /**
  * Class UserLoginPage

@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-if [[ $# -eq 0 ]]
-then
-  codecept run acceptance
+if [ $# -eq 0 ]; then
+  codecept run Acceptance --html --xml
 else
-  codecept run $@
+  codecept run $@ --html --xml
 fi
