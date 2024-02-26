@@ -11,6 +11,7 @@ pipelines:
             - apt-get update -yqq
             - apt-get install -y wget git zip unzip
             - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+            - export COMPOSER_ALLOW_SUPERUSER=1
             # Secondly, install the project while ignoring PHP extensions like "bcmath" or "gd".
             # Ignore dev dependencies if drupal-check is already there.
             # While using Acquia Cloud, disable the BLT plugin.
