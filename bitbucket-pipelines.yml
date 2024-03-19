@@ -1,0 +1,39 @@
+pipelines:
+  pull-requests:
+    '**':
+      - step:
+          name: Build artifact
+          caches:
+            - composer
+          image: php:8.2-cli
+          script:
+            # Firstly, install composer and required libraries.
+            - apt-get update -yqq
+            - apt-get install -y wget git zip unzip
+            - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+            - export COMPOSER_ALLOW_SUPERUSER=1
+            # Secondly, install the project while ignoring PHP extensions like "bcmath" or "gd".
+            # Ignore dev dependencies if drupal-check is already there.
+            # While using Acquia Cloud, disable the BLT plugin.
+            # - composer config allow-plugins.acquia/blt false
+            - composer install --no-dev --ignore-platform-req=ext-*
+          artifacts:
+            # The entire project directory will be passed to next steps.
+            - "**"
+
+      - parallel:
+          steps:
+            - step:
+                name: CodeSniffer
+                image: droptica/phpcs
+                script:
+                  - phpcs  --standard=./phpcs.xml ./web/modules/custom ./web/themes/custom
+                  # - phpcs --standard=PSR12 --extensions=php,yml --report=full,gitblame ./tests
+
+            - step:
+                name: PHPStan
+                image: droptica/phpstan
+                script:
+                  # Workaround for phpstan.neon absolute paths.
+                  - ln -s "$(pwd)" /opt/project
+                  - phpstan analyse -c ./phpstan.neon --no-progress

@@ -1,0 +1,33 @@
+includes:
+    # Choose extensions to enable. Please refer to the Dockerfile for possible options.
+    - /composer/vendor/mglaman/phpstan-drupal/extension.neon
+    - /composer/vendor/phpstan/phpstan-deprecation-rules/rules.neon
+    - /composer/vendor/ekino/phpstan-banned-code/extension.neon
+
+parameters:
+    drupal:
+        drupal_root: /opt/project/web
+
+    # According to https://phpstan.org/user-guide/rule-levels
+    # Level 9 is most strict and it includes all checks.
+    level: 4
+
+    # The list of paths to check.
+    # This setting is ignored by PHPStorm, but it comes in handy when using terminal.
+    paths:
+        - web/modules/custom
+        - web/themes/custom
+        # - tests
+
+    # Ignore errors in certain files (remember to escape $ sign by backslash!).
+    ignoreErrors:
+        # new static() is a best practice in Drupal, so we cannot fix that.
+        - "#^Unsafe usage of new static#"
+
+    # Uncomment the following lines to exclude paths from analysis.
+    excludePaths:
+        - */vendor*/
+        - */node_modules/*
+
+    # # Check for specific PHP version.
+    phpVersion: 80200 # PHP 8.2

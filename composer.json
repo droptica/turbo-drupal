@@ -1,0 +1,97 @@
+{
+	"name": "droptica/ddevdrupal-project",
+	"description": "ddevdrupal project with all necessary assets.",
+	"type": "project",
+	"license": "GPL-2.0-or-later",
+	"authors": [{
+		"name": "Droptica",
+		"role": "Maintenancer"
+	}],
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "https://packages.drupal.org/8"
+		},
+		{
+			"type": "composer",
+			"url": "https://asset-packagist.org"
+		}
+	],
+	"require": {
+		"composer/installers": "^2.0",
+		"cweagans/composer-patches": "^1.7",
+		"drupal/admin_toolbar": "^3.4",
+		"drupal/config_split": "^2.0",
+		"drupal/core-composer-scaffold": "^10.1.2",
+		"drupal/core-recommended": "^10.1.2",
+		"drupal/gin": "^3.0@RC",
+		"drupal/security_review": "^2.0",
+		"drupal/site_audit": "^4.0@RC",
+		"drush/drush": "^12"
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+		"droptica/codeception-package": "^10.8",
+		"drupal/coder": "^8.3",
+		"drupal/config_inspector": "^2.1"
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tests\\": "tests/"
+		}
+	},
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"config": {
+		"sort-packages": true,
+		"platform": {
+			"php": "8.2"
+		},
+		"allow-plugins": {
+			"composer/installers": true,
+			"cweagans/composer-patches": true,
+			"drupal/console-extend-plugin": true,
+			"drupal/core-composer-scaffold": true,
+			"oomphinc/composer-installers-extender": true,
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"extra": {
+		"drupal-scaffold": {
+			"locations": {
+				"web-root": "web/"
+			},
+			"file-mapping": {
+				"[project-root]/.editorconfig": false,
+				"[project-root]/.gitattributes": false,
+				"[web-root]/.ht.router.php": false,
+				"[web-root]/example.gitignore": false,
+				"[web-root]/modules/README.txt": false,
+				"[web-root]/profiles/README.txt": false,
+				"[web-root]/sites/README.txt": false,
+				"[web-root]/sites/development.services.yml": false,
+				"[web-root]/themes/README.txt": false,
+				"[web-root]/README.txt": false,
+				"[web-root]/INSTALL.txt": false,
+				"[web-root]/web.config": false,
+				"[web-root]/robots.txt": false
+			}
+		},
+		"installer-types": [
+			"drupal-core",
+			"bower-asset",
+			"npm-asset"
+		],
+		"installer-paths": {
+			"web/core": ["type:drupal-core"],
+			"web/libraries/{$name}": ["type:drupal-library", "type:bower-asset", "type:npm-asset"],
+			"web/modules/contrib/{$name}": ["type:drupal-module"],
+			"web/profiles/contrib/{$name}": ["type:drupal-profile"],
+			"web/themes/contrib/{$name}": ["type:drupal-theme"],
+			"drush/Commands/contrib/{$name}": ["type:drupal-drush"],
+			"web/modules/custom/{$name}": ["type:drupal-custom-module"],
+			"web/profiles/custom/{$name}": ["type:drupal-custom-profile"],
+			"web/themes/custom/{$name}": ["type:drupal-custom-theme"]
+		}
+	}
+}

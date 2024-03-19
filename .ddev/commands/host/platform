@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# Pull any database and files from the platform.sh.
+ddev pull platform
+
+# Composer install with styles.
+ddev composer install
+
+# Run all necessary drush commands.
+ddev drush deploy
+ddev drush uli
+
+# Build the theme.
+# ddev theme

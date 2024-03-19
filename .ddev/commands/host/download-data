@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+# The server URL to download data from.
+DATA_DEV_SERVER=XXX
+# The domain and the directory where the data are kept.
+DATA_DOMAIN=${PWD##*/}
+
+# Prepare some colors.
+aqua=$(tput -T xterm-256color setaf 14)
+no_color=$(tput -T xterm-256color sgr0)
+
+# If DATA_DEV_SERVER is not set or equal to XXX, exit.
+if [[ -z ${DATA_DEV_SERVER} ]] || [[ ${DATA_DEV_SERVER} == "XXX" ]]; then
+  printf "%s[%s] %sSet the server URL to download data from in a DATA_DEV_SERVER environment variable.\n" "${aqua}" "${DDEV_SITENAME^}" "${no_color}"
+  exit 1
+fi
+
+# Get user for current host.
+username=$(ssh -G ${DATA_DEV_SERVER} | grep -m1 -oP "(?<=user ).*")
+
+if [[ $username != *.* ]] ; then
+  # Ask user for their ssh username.
+  printf "%s[%s] %sInvalid (or missing) user variable in SSH config.\n" "${aqua}" "${DDEV_SITENAME^}" "${no_color}"
+  printf "%s[%s] %sEnter SSH user [name.surname]: " "${aqua}" "${DDEV_SITENAME^}" "${no_color}" >&2
+  read -r username
+fi
+
+# Download files using their names.
+scp -P 59184 "$username"@${DATA_DEV_SERVER}:/opt/internal/"${DATA_DOMAIN}"/db/database.sql.tar.gz build/files/sites/default/database.sql.tar.gz
+scp -P 59184 "$username"@${DATA_DEV_SERVER}:/opt/internal/"${DATA_DOMAIN}"/files/files.tar.gz build/files/sites/default/files.tar.gz
+
+# Copy target files to ddev directory as well.
+cp ./build/files/sites/default/database.sql.tar.gz ./.ddev/db-dumps/database.sql.tar.gz
+cp ./build/files/sites/default/files.tar.gz ./.ddev/file-dumps/files.tar.gz

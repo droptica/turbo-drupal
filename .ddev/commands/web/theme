@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+# Go to the theme directory.
+THEME_PATH=/var/www/html/web/themes/custom/XXX
+
+# Check if theme directory exists.
+if ! [ -d ${THEME_PATH} ]; then
+  echo "Theme ${THEME_PATH} directory does not exist. Define the correct THEME_PATH variable."
+  exit 1;
+fi
+
+# Install the dependencies.
+npm install
+
+# Check if user wants instant-update.
+if [ "$1" == "watch" ]; then
+  npm run watch
+elif [ "$1" == "dev" ]; then
+  echo "Compiling DEV version."
+  npm run dev
+else
+  echo "Compiling PRODUCTION, minified version."
+  npm run production
+fi

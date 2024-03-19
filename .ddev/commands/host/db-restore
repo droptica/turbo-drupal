@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+# Prepare some colors.
+red=$(tput -T xterm-256color setaf 1)
+aqua=$(tput -T xterm-256color setaf 14)
+no_color=$(tput -T xterm-256color sgr0)
+
+# Add info about restoring.
+printf "%s[%s] %sRestoring the database...\n" "${aqua}" "${DDEV_SITENAME^}" "${no_color}"
+
+# Check if users passed one argument.
+if [ "$#" -ne 1 ]; then
+  # If not, run default files check.
+  if [ -f "${DDEV_APPROOT}/.ddev/db-dumps/database.sql" ]; then
+    # Restore .sql from local dump.
+    ddev import-db --database=db --file="${DDEV_APPROOT}"/.ddev/db-dumps/database.sql
+  elif [ -f "${DDEV_APPROOT}/.ddev/db-dumps/database.sql.gz" ]; then
+    # Restore .sql.gz from local dump.
+    ddev import-db --database=db --file="${DDEV_APPROOT}"/.ddev/db-dumps/database.sql.gz
+  elif [ -f "${DDEV_APPROOT}/.ddev/db-dumps/database.sql.tar.gz" ]; then
+    # Restore .sql.tar.gz from local dump.
+    ddev import-db --database=db --file="${DDEV_APPROOT}"/.ddev/db-dumps/database.sql.tar.gz
+  else
+    # Add info about non-existing files.
+    printf "%s[%s] %sWe couldn't find any database file, skipping db-restore...\n" "${aqua}" "${DDEV_SITENAME^}" "${no_color}"
+
+    # Skip rest of the code.
+    exit;
+  fi
+else
+  # If user did pass one argument, check if that file exists.
+  if [ -f "${DDEV_APPROOT}/.ddev/db-dumps/$1" ]; then
+    # Restore .sql from local dump.
+    ddev import-db --database=db --file="${DDEV_APPROOT}"/.ddev/db-dumps/"$1"
+  else
+    # Add info about non-existing files.
+    printf "%s[%s] %sWe couldn't find '%s' database file%s!\n" "${aqua}" "${DDEV_SITENAME^}" "${red}" "$1" "${no_color}"
+
+    # Skip rest of the code.
+    exit 1;
+  fi
+fi
+
+# Get status code from current command.
+status=$?
+
+# Check status code from previous command.
+if [ $status != 0 ]; then
+  # Add info some errors that were detected.
+  printf "%s[%s] %sThere was an error in the db-import, check them before you can continue.%s\n" "${aqua}" "${DDEV_SITENAME^}" "${red}" "${no_color}"
+
+  # Return error for other scripts to handle.
+  exit 1;
+fi
+
+# Add ending info about db import status.
+printf "%s[%s] %sSuccessfully restored database!\n" "${aqua}" "${DDEV_SITENAME^}" "${no_color}"
