@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
 
-# Disable commands dynamic path.
-# shellcheck disable=SC2154
-
 PHPSTAN_CONFIG_PATH="/opt/project/phpstan.neon"
-
-docker run --rm -t -v `pwd`:/opt/project droptica/phpstan:latest analyse -c ${PHPSTAN_CONFIG_PATH}
+docker run --pull always --rm -t -v `pwd`:/opt/project droptica/phpstan:latest analyse -c ${PHPSTAN_CONFIG_PATH}

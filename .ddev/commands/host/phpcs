@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 PHPCS_STANDARD="./phpcs.xml"
-docker run --rm -t -v `pwd`:/app droptica/phpcs:latest phpcs  --standard=${PHPCS_STANDARD}
+docker run --pull always --rm -t -v `pwd`:/app droptica/phpcs:latest phpcs  --standard=${PHPCS_STANDARD}
 
 PHPCS_STANDARD_TESTS=PSR12
 PHPCS_DIRECTORIES_TESTS="/app/tests"
-docker run --rm -t -v `pwd`:/app droptica/phpcs:latest phpcs  --standard=${PHPCS_STANDARD_TESTS} --extensions=php,yml --report=full,gitblame ${PHPCS_DIRECTORIES_TESTS}
+docker run --pull always --rm -t -v `pwd`:/app droptica/phpcs:latest phpcs  --standard=${PHPCS_STANDARD_TESTS} --extensions=php,yml --report=full,gitblame ${PHPCS_DIRECTORIES_TESTS}

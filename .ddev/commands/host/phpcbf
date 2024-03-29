@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 PHPCBF_CONFIG_PATH="./phpcs.xml"
-docker run --rm -t -v `pwd`:/app droptica/phpcs:latest phpcbf  --standard=${PHPCBF_CONFIG_PATH}
+docker run --pull always --rm -t -v `pwd`:/app droptica/phpcs:latest phpcbf  --standard=${PHPCBF_CONFIG_PATH}
 
 PHPCBF_STANDARD_TESTS=PSR12
 PHPCBF_DIRECTORIES_TESTS="/app/tests"
-docker run --rm -t -v `pwd`:/app droptica/phpcs:latest phpcbf  --standard=${PHPCBF_STANDARD_TESTS} --extensions=php,yml --report=full,gitblame ${PHPCBF_DIRECTORIES_TESTS}
+docker run --pull always --rm -t -v `pwd`:/app droptica/phpcs:latest phpcbf  --standard=${PHPCBF_STANDARD_TESTS} --extensions=php,yml --report=full,gitblame ${PHPCBF_DIRECTORIES_TESTS}

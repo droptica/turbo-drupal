@@ -22,5 +22,5 @@ DIRECTORY="$@"
 
 # Begin script in case all parameters are correct
 FIND="find $DIRECTORY -name '*.php' -or -name '*.module' -or -name '*.install' -or -name '*.theme' -or -name '*.inc' -or -name '*.profile'"
-docker run --rm -ti -w "/opt/project" -v `pwd`:/opt/project php:$PHPVER bash -c "$FIND | xargs -n1 /usr/local/bin/php --syntax-check" || true
-docker run --rm -ti -w "/opt/project" -v `pwd`:/opt/project droptica/compatibility:latest phpcs --ignore=*.js,*.css -p $DIRECTORY --standard=PHPCompatibility --runtime-set testVersion $PHPVER --report=code || true
+docker run --pull always --rm -ti -w "/opt/project" -v `pwd`:/opt/project php:$PHPVER bash -c "$FIND | xargs -n1 /usr/local/bin/php --syntax-check" || true
+docker run --pull always --rm -ti -w "/opt/project" -v `pwd`:/opt/project droptica/compatibility:latest phpcs --ignore=*.js,*.css -p $DIRECTORY --standard=PHPCompatibility --runtime-set testVersion $PHPVER --report=code || true
