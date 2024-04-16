@@ -1,6 +1,6 @@
 {
-	"name": "droptica/ddevdrupal-project",
-	"description": "ddevdrupal project with all necessary assets.",
+	"name": "droptica/turbo-drupal",
+	"description": "Starter template for Drupal projects. It includes the most popular modules and tools for Drupal development. It is based on the Drupal 10 core and uses the Gin theme as a base theme. It also includes the Admin Toolbar, Config Split, Config Inspector, Security Review, Site Audit, and Drush modules. It is also configured to use the PHP CodeSniffer and Codeception tools for code quality control.",
 	"type": "project",
 	"license": "GPL-2.0-or-later",
 	"authors": [{
