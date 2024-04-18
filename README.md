@@ -80,8 +80,8 @@ ddev build
 ### DDEV default commands:
 
 ```bash
-ddev drush <params> - Normal drush command, what did you expected here? :D
-ddev composer <params> - Same as above but with composer :D
+ddev drush <params> - Normal drush command, what did you expect here? :D
+ddev composer <params> - Same as above, but with composer :D
 ```
 
 ### DDEV build commands:
