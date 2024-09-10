@@ -10,7 +10,7 @@
   ],
   "ignorePresets": [":prHourlyLimit2"],
   "constraints": {
-    "php": "8.2.0"
+    "php": "8.3.0"
   },
   "packageRules": [
     {

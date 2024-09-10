@@ -30,4 +30,4 @@ parameters:
         - */node_modules/*
 
     # # Check for specific PHP version.
-    phpVersion: 80200 # PHP 8.2
+    phpVersion: 80300 # PHP 8.3
