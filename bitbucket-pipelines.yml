@@ -19,8 +19,8 @@ pipelines:
             - echo "deb [signed-by=/etc/apt/keyrings/ddev.gpg] https://pkg.ddev.com/apt/ * *" | sudo tee /etc/apt/sources.list.d/ddev.list >/dev/null
 
             # Update package information and install DDEV
-            - sudo sh -c 'echo ""'
-            - sudo apt-get update && sudo apt-get install -y ddev
+            - sh -c 'echo ""'
+            - apt-get update && sudo apt-get install -y ddev
 
             # One-time initialization of mkcert
             - mkcert -install
