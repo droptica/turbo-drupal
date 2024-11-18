@@ -42,7 +42,7 @@ pipelines:
             - echo "\$databases['default']['default'] = ['driver' => 'mysql','database' => 'drupal','username' => 'root','password' => 'root','host' => 'mysql'];" >> web/sites/default/settings.php
             
             # Instalacja Drupala
-            - cat ../.bitbucket/settings.local.php.txt >> ./web/sites/default/settings.php
+            - cat .bitbucket/settings.local.php.txt >> ./web/sites/default/settings.php
             - vendor/bin/drush site:install --account-name=admin --account-pass=admin -y
             
             # Sprawdzenie statusu
