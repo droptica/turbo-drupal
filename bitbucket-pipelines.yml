@@ -2,10 +2,11 @@ definitions:
   services:
     mysql:
       image: mysql:8.0
-      variables:
+      environment:
         MYSQL_DATABASE: 'drupal'
-        MYSQL_ROOT_PASSWORD: 'drupal'
+        MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
         MYSQL_USER: 'drupal'
+        MYSQL_PASSWORD: 'drupal'
 
 pipelines:
   pull-requests:
@@ -47,6 +48,8 @@ pipelines:
             
             # Sprawdzenie statusu
             - vendor/bin/drush status
+          services:
+            - mysql
           artifacts:
             - "**"
 
