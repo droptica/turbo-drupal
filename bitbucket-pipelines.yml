@@ -49,8 +49,8 @@ pipelines:
             # Sprawdzenie statusu
             - vendor/bin/drush status
             - update_branch_name="feature/${date}"
-            - git checkout -b test/123
-            - git push --set-upstream origin "${update_branch_name}"
+            - git checkout -b test/1234
+            - git push --set-upstream origin test/1234
           services:
             - mysql
           artifacts:
