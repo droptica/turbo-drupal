@@ -17,8 +17,10 @@ pipelines:
           caches:
             - composer
           script:
-            # Instalacja niezbędnych narzędzi
-            - apt-get update && apt-get install -y git unzip
+            # Instalacja niezbędnych narzędzi i rozszerzeń PHP
+            - apt-get update && apt-get install -y git unzip imagemagick libmagickwand-dev
+            - pecl install imagick
+            - docker-php-ext-enable imagick
 
             # Instalacja Composera
             - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -43,9 +45,6 @@ pipelines:
             
             # Sprawdzenie statusu
             - vendor/bin/drush status
-            
-            # Opcjonalnie: import konfiguracji
-            # - vendor/bin/drush cim -y
           artifacts:
             - "**"
 
