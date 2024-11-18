@@ -15,7 +15,7 @@ pipelines:
             - sudo chmod a+r /etc/apt/keyrings/ddev.gpg
 
             # Add DDEV releases to your package repository
-            - sudo sh -c 'echo ""'
+            - sh -c 'echo ""'
             - echo "deb [signed-by=/etc/apt/keyrings/ddev.gpg] https://pkg.ddev.com/apt/ * *" | sudo tee /etc/apt/sources.list.d/ddev.list >/dev/null
 
             # Update package information and install DDEV
