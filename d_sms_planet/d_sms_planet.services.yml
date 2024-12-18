@@ -1,8 +1,0 @@
-services:
-  d_sms_planet.send_sms:
-    class: Drupal\d_sms_planet\Service\SmsPlanetService
-    arguments: ['@config.factory', '@logger.factory', '@encryption', '@uuid']
-
-  d_sms_planet.sms_queue:
-    class: Drupal\d_sms_planet\Plugin\QueueWorker\SmsPlanetQueue
-    arguments: ['@config.factory', '@d_sms_planet.send_sms']
