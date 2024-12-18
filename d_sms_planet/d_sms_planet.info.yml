@@ -1,0 +1,16 @@
+name: SMS Planet integration
+type: module
+description: 'SMS Planet gateway integration'
+package: Custom
+core_version_requirement: '>=10'
+dependencies:
+  - encryption:encryption
+  - eca:eca
+  - eca:eca_base
+  - eca:eca_workflow
+  - eca:eca_config
+  - eca:eca_content
+  - eca:eca_ui
+  - eca:eca_user
+  - bpmn_io:bpmn_io
+  - bpmn_io:eca_modeller_bpmn

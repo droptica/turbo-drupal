@@ -1,0 +1,6 @@
+pytest==7.*
+flake8==6.*
+requests-mock==1.11.*
+pytest-mock==3.11.*
+
+bitbucket-pipes-toolkit==4.*

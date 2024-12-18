@@ -1,0 +1,21 @@
+name: Bitbucket ChatGPT codereview
+image: bitbucketpipelines/bitbucket-chatgpt-codereview:0.1.3
+description: "Unlock AI's power of ChatGPT for code review of pull requests."
+category: "Code quality"
+variables:
+  - name: OPENAI_API_KEY
+    default: "$OPENAI_API_KEY"
+  - name: BITBUCKET_ACCESS_TOKEN
+    default: "$BITBUCKET_ACCESS_TOKEN"
+repository: https://bitbucket.org/atlassian/bitbucket-chatgpt-codereview
+vendor:
+  name: OpenAI
+  website: https://openai.com/
+maintainer:
+  name: Atlassian
+  website: https://www.atlassian.com/
+tags:
+    - AI
+    - code-quality
+    - code-review
+  

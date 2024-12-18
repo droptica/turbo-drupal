@@ -1,0 +1,28 @@
+# IntelliJ IDEA
+.idea
+*.iml
+
+.DS_Store
+
+# Testing
+.pytest_cache
+.coverage
+htmlcov/
+
+# OS specific
+.python-version
+__pycache__
+*.pyc
+.editorconfig
+
+# test specific
+tmp/
+# Secrets
+id_rsa
+credentials
+identity
+*.pem
+.ssh/
+.aws/
+.gcp/
+.kube/

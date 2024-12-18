@@ -1,0 +1,14 @@
+{
+  "changes": [
+    {
+      "description": "Fix a link to the Atlassian community.",
+      "type": "patch"
+    },
+    {
+      "description": "Internal maintenance: Add bitbucket-chatgpt-codereview pipe to the review step.",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2024-04-19T09:08:39+00:00",
+  "version": "0.1.1"
+}

@@ -1,0 +1,62 @@
+uuid: c9acb5be-542d-4a69-b257-908e0145ee5f
+langcode: en
+status: true
+dependencies:
+  config:
+    - eca.eca.process_yzodmqv
+id: process_yzodmqv
+label: 'SMS message on account creation'
+tags:
+  - untagged
+documentation: ''
+filename: ''
+modeldata: |
+  <?xml version="1.0" encoding="UTF-8"?>
+  <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:qa="http://some-company/schema/bpmn/qa" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+    <bpmn2:process id="Process_yzoDMQV" name="SMS message on account creation" isExecutable="true" camunda:versionTag="v1">
+      <bpmn2:startEvent id="Event_19g6ucs" name="User created" camunda:modelerTemplate="org.drupal.event.content_entity:insert">
+        <bpmn2:extensionElements>
+          <camunda:properties>
+            <camunda:property name="pluginid" value="content_entity:insert" />
+          </camunda:properties>
+          <camunda:field name="type">
+            <camunda:string>user _all</camunda:string>
+          </camunda:field>
+        </bpmn2:extensionElements>
+        <bpmn2:outgoing>Flow_1yjtn6s</bpmn2:outgoing>
+      </bpmn2:startEvent>
+      <bpmn2:task id="Activity_0bap7m0" name="Send sms message" camunda:modelerTemplate="org.drupal.action.eca_send_sms">
+        <bpmn2:extensionElements>
+          <camunda:properties>
+            <camunda:property name="pluginid" value="eca_send_sms" />
+          </camunda:properties>
+          <camunda:field name="sender">
+            <camunda:string>TEST</camunda:string>
+          </camunda:field>
+          <camunda:field name="receiver">
+            <camunda:string>CHANGE_ME</camunda:string>
+          </camunda:field>
+          <camunda:field name="message">
+            <camunda:string>A new user was created on your website.</camunda:string>
+          </camunda:field>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>Flow_1yjtn6s</bpmn2:incoming>
+      </bpmn2:task>
+      <bpmn2:sequenceFlow id="Flow_1yjtn6s" sourceRef="Event_19g6ucs" targetRef="Activity_0bap7m0" />
+    </bpmn2:process>
+    <bpmndi:BPMNDiagram id="BPMNDiagram_Process_yzoDMQV">
+      <bpmndi:BPMNPlane id="BPMNPlane_Process_yzoDMQV" bpmnElement="Process_yzoDMQV">
+        <bpmndi:BPMNShape id="Event_19g6ucs_di" bpmnElement="Event_19g6ucs">
+          <dc:Bounds x="57" y="52" width="36" height="36" />
+        </bpmndi:BPMNShape>
+        <bpmndi:BPMNShape id="Activity_0bap7m0_di" bpmnElement="Activity_0bap7m0">
+          <dc:Bounds x="175" y="30" width="100" height="80" />
+          <bpmndi:BPMNLabel />
+        </bpmndi:BPMNShape>
+        <bpmndi:BPMNEdge id="Flow_1yjtn6s_di" bpmnElement="Flow_1yjtn6s">
+          <di:waypoint x="93" y="70" />
+          <di:waypoint x="175" y="70" />
+        </bpmndi:BPMNEdge>
+      </bpmndi:BPMNPlane>
+    </bpmndi:BPMNDiagram>
+  </bpmn2:definitions>

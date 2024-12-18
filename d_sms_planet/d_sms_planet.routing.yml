@@ -1,0 +1,23 @@
+d_sms_planet.content:
+  path: '/admin/config/services/sms-planet-content'
+  defaults:
+    _form: '\Drupal\d_sms_planet\Form\SmsContentForm'
+    _title: 'Configure SMS Planet Content'
+  requirements:
+    _permission: 'access smsplanet content'
+
+d_sms_planet.settings:
+    path: '/admin/config/services/sms-planet-settings'
+    defaults:
+        _form: '\Drupal\d_sms_planet\Form\SmsPlanetConfig'
+        _title: 'SMS Planet API settings'
+    requirements:
+        _permission: 'access smsplanet config'
+
+d_sms_planet.test_sms:
+    path: '/admin/config/services/sms-planet-test-sms'
+    defaults:
+        _form: '\Drupal\d_sms_planet\Form\SmsTestFrom'
+        _title: 'SMS Test'
+    requirements:
+        _permission: 'access smsplanet send sms'

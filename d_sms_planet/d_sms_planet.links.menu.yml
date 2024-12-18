@@ -1,0 +1,23 @@
+d_sms_planet.content:
+  title: 'SMS Content'
+  parent: system.admin_config_services
+  description: 'SMS Content.'
+  route_name: d_sms_planet.content
+  options:
+    _admin_route: TRUE
+
+d_sms_planet.settings:
+  title: 'SMS Planet API settings'
+  parent: system.admin_config_services
+  description: 'Change settings for SMS Planet.'
+  route_name: d_sms_planet.settings
+  options:
+    _admin_route: TRUE
+
+d_sms_planet.test_sms:
+  title: 'SMS Test'
+  parent: system.admin_config_services
+  description: 'Send test SMS.'
+  route_name: d_sms_planet.test_sms
+  options:
+    _admin_route: TRUE

@@ -1,0 +1,14 @@
+access smsplanet send sms:
+  title: 'Snd SMS via SMS Planet API.'
+  description: 'Allows to send SMS via SMS Planet API.'
+  restrict access: true
+
+access smsplanet config:
+  title: 'Configure SMS Planet settings.'
+  description: 'Allows to configure SMS Planet settings.'
+  restrict access: true
+
+access smsplanet content:
+  title: 'Configure SMS Planet content.'
+  description: 'Allows to configure SMS Planet content.'
+  restrict access: true

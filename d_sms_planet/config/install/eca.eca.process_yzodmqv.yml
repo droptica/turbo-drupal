@@ -1,0 +1,33 @@
+uuid: d1a7251c-53d1-4c5e-8348-631af8d33f8a
+langcode: en
+status: true
+dependencies:
+  module:
+    - d_sms_planet
+    - eca_content
+id: process_yzodmqv
+modeller: bpmn_io
+label: 'SMS message on account creation'
+version: v1
+weight: 0
+events:
+  Event_19g6ucs:
+    plugin: 'content_entity:insert'
+    label: 'User created'
+    configuration:
+      type: 'user _all'
+    successors:
+      -
+        id: Activity_0bap7m0
+        condition: ''
+conditions: {  }
+gateways: {  }
+actions:
+  Activity_0bap7m0:
+    plugin: eca_send_sms
+    label: 'Send sms message'
+    configuration:
+      sender: TEST
+      receiver: CHANGE_ME
+      message: 'A new user was created on your website.'
+    successors: {  }
