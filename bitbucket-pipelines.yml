@@ -70,3 +70,13 @@ pipelines:
                 script:
                   - ln -s "$(pwd)" /opt/project
                   - phpstan analyse -c ./phpstan.neon --no-progress
+
+            - step:
+                name: ChatGPT Codereview
+                script:
+                  - pipe: atlassian/bitbucket-chatgpt-codereview:0.1.3
+                    variables:
+                      OPENAI_API_KEY: $OPENAI_API_KEY
+                      BITBUCKET_ACCESS_TOKEN: $BITBUCKET_ACCESS_TOKEN
+                      MODEL: "gpt-3.5-turbo-0125"
+                      DEBUG: "true"
