@@ -1,0 +1,89 @@
+image:
+  name: python:3.10
+
+test: &test
+  parallel:
+    - step:
+        name: Test
+        services:
+        - docker
+        script:
+          - pip install -r requirements.txt
+          - pip install -r test/requirements.txt
+          - flake8 --ignore E501
+          - pytest test/* --verbose --capture=no
+    - step:
+        name: Lint the Dockerfile
+        image: hadolint/hadolint:latest-debian
+        script:
+          - hadolint Dockerfile
+    - step:
+        name: Security Scan
+        script:
+          # Run a security scan for sensitive data.
+          # See more security tools at https://bitbucket.org/product/features/pipelines/integrations?&category=security
+          - pipe: atlassian/git-secrets-scan:1.5.0
+
+
+release-dev: &release-dev
+  step:
+    name: Release development version
+    trigger: manual
+    image: python:3.10
+    script:
+      - set -ex
+      - pip install semversioner
+      - VERSION=$(semversioner current-version).${BITBUCKET_BUILD_NUMBER}-dev
+      - pipe: atlassian/bitbucket-pipe-release:5.7.0
+        variables:
+          REGISTRY_USERNAME: $REGISTRY_USERNAME
+          REGISTRY_PASSWORD: $REGISTRY_PASSWORD
+          IMAGE: docker-public.packages.atlassian.com/bitbucketpipelines/$BITBUCKET_REPO_SLUG
+          REGISTRY_URL: docker-public.packages.atlassian.com
+          DOCKER_BUILD_PLATFORMS: "linux/arm64,linux/amd64"
+          GIT_PUSH: 'false'
+          VERSION: ${VERSION}
+    services:
+      - docker
+
+
+push: &push
+  step:
+    name: Push and Tag
+    image: python:3.10
+    script:
+      - pipe: atlassian/bitbucket-pipe-release:5.7.0
+        variables:
+          REGISTRY_USERNAME: $REGISTRY_USERNAME
+          REGISTRY_PASSWORD: $REGISTRY_PASSWORD
+          IMAGE: docker-public.packages.atlassian.com/bitbucketpipelines/$BITBUCKET_REPO_SLUG
+          DOCKER_BUILD_PLATFORMS: "linux/arm64,linux/amd64"
+          REGISTRY_URL: docker-public.packages.atlassian.com
+    services:
+      - docker
+
+
+review: &review
+  step:
+    name: Review pull request with OpenAI ChatGPT
+    script:
+      # Build for any pull request created
+      - pipe: atlassian/bitbucket-chatgpt-codereview:0.1.0
+        variables:
+          OPENAI_API_KEY: $OPENAI_API_KEY
+          BITBUCKET_ACCESS_TOKEN: $BITBUCKET_ACCESS_TOKEN
+          MODEL: 'gpt-4-turbo-preview'
+          CHATGPT_PROMPT_MAX_TOKENS: $CHATGPT_PROMPT_MAX_TOKENS
+
+
+pipelines:
+  default:
+  - <<: *test
+  - <<: *release-dev
+  branches:
+    master:
+    - <<: *test
+    - <<: *push
+  pull-requests:
+    '**':
+      - <<: *review

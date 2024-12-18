@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "description": "Internal maintenance: Bump release pipe version. Add multi-platform build: linux/arm64 and linux/amd64.",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2024-08-08T18:11:27+00:00",
+  "version": "0.1.3"
+}

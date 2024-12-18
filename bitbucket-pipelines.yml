@@ -26,31 +26,31 @@ pipelines:
 
             # Instalacja Composera
             - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-            
+
             # Instalacja zależności projektu
             - composer install --no-dev --ignore-platform-req=ext-*
-            
+
             # Instalacja Drush
             - composer require drush/drush
-            
+
             # Konfiguracja Drupala
             - mkdir -p web/sites/default/files
             - chmod -R 777 web/sites/default/files
             - cp web/sites/default/default.settings.php web/sites/default/settings.php
             - chmod 777 web/sites/default/settings.php
-            
+
             # Konfiguracja bazy danych
             #- echo "\$databases['default']['default'] = ['driver' => 'mysql','database' => 'drupal','username' => 'root','password' => 'root','host' => 'mysql'];" >> web/sites/default/settings.php
-            
+
             # Instalacja Drupala
             - cat .bitbucket/settings.local.php.txt >> ./web/sites/default/settings.php
             - vendor/bin/drush site:install --account-name=admin --account-pass=admin -y
-            
+
             # Sprawdzenie statusu
             - vendor/bin/drush status
             - update_branch_name="feature/${date}"
-            - git checkout -b test/1234
-            - git push --set-upstream origin test/1234
+#            - git checkout -b test/1234
+#            - git push --set-upstream origin test/1234
           services:
             - mysql
           artifacts:
@@ -74,9 +74,11 @@ pipelines:
             - step:
                 name: ChatGPT Codereview
                 script:
-                  - pipe: atlassian/bitbucket-chatgpt-codereview:0.1.3
+                  - docker build -t local-chatgpt-cr chatgpt-cr-script
+                  - pipe: docker://local-chatgpt-cr
                     variables:
                       OPENAI_API_KEY: $OPENAI_API_KEY
                       BITBUCKET_ACCESS_TOKEN: $BITBUCKET_ACCESS_TOKEN
-                      MODEL: "gpt-3.5-turbo-0125"
+                      MODEL: "gpt-4o"
+                      MESSAGE: "You are a Drupal 10 specialist and an expert in PHP coding standards. Please review the following code with the following goals in mind: Drupal 10 Best Practices: Assess the code's alignment with Drupal 10 architecture and conventions. Verify adherence to Drupal's APIs, hooks, and services. Check for proper usage of dependency injection, configuration management, and any other relevant Drupal-specific patterns.PHP Coding Standards: Evaluate compliance with the official Drupal PHP Coding Standards: https://www.drupal.org/docs/develop/standards/php/php-coding-standards. Identify any deviations or improvements related to code readability, formatting, and structure. Code Quality: Check for potential bugs, inefficiencies, or edge cases. Suggest optimizations or refactoring opportunities. Highlight any missing documentation, comments, or tests. Provide a detailed, structured review with clear suggestions for improvement. Focus on actionable feedback and best practices that enhance maintainability and performance of the code."
                       DEBUG: "true"
