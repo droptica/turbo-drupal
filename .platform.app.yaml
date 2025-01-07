@@ -117,6 +117,7 @@ hooks:
     ddev drush config-set system.theme admin gin -y
     ddev drush en admin_toolbar admin_toolbar_tools config_split security_review site_audit -y
 
+
 # The configuration of app when it is exposed to the web.
 web:
   locations:
