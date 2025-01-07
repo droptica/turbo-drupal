@@ -112,10 +112,10 @@ hooks:
     #   - and if config files are present, `config-import`
     cd web
     bash $PLATFORM_APP_DIR/drush/platformsh_deploy_drupal.sh
-    ddev drush site:install --config-dir=../config/sync --account-name=admin --account-pass=123 -y
-    ddev drush theme:install gin -y
-    ddev drush config-set system.theme admin gin -y
-    ddev drush en admin_toolbar admin_toolbar_tools config_split security_review site_audit -y
+    drush site:install --config-dir=../config/sync --account-name=admin --account-pass=123 -y
+    drush theme:install gin -y
+    drush config-set system.theme admin gin -y
+    drush en admin_toolbar admin_toolbar_tools config_split security_review site_audit -y
 
 
 # The configuration of app when it is exposed to the web.
