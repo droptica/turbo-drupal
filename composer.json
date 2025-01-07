@@ -25,9 +25,10 @@
 		"drupal/core-composer-scaffold": "^10.1.2",
 		"drupal/core-recommended": "^10.1.2",
 		"drupal/gin": "^3.0@RC",
-		"drupal/security_review": "^2.0",
-		"drupal/site_audit": "^4.0@RC",
-		"drush/drush": "^12"
+		"drupal/security_review": "^3.0",
+		"drupal/site_audit": "^4.1",
+		"drush/drush": "^12",
+		"platformsh/config-reader": "^3.0"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",

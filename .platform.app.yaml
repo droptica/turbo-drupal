@@ -5,10 +5,10 @@
 
 # The name of this app. Must be unique within a project.
 # Must be lowercase alphanumeric characters. Changing the name destroys data associated with the app.
-name: 'app'
+name: 'turbo-drupal'
 
 # The runtime the application uses.
-type: 'php:8.2'
+type: 'php:8.3'
 
 dependencies:
   php:
@@ -16,18 +16,6 @@ dependencies:
     drush/drush: '^12'
   nodejs:
     n: "*"
-    gulp: "^4.0.2"
-    gulp-autoprefixer: "^7.0.1"
-    gulp-uglify: "^3.0.2"
-    gulp-sass: "^4.0.2"
-    gulp-sass-glob: "^1.1.0"
-    gulp-sourcemaps: "^3.0.0"
-    gulp-dart-sass: "^1.0.2"
-    gulp-postcss: "^9.0.0"
-    gulp-rename: "^2.0.0"
-    gulp-watch: "^5.0.1"
-    pump: "^3.0.0"
-    yargs: "^17.0.1"
 
 runtime:
   # Enable the redis extension so Drupal can communicate with the Redis cache.
@@ -36,6 +24,7 @@ runtime:
     - sodium
     - apcu
     - blackfire
+    - imagick
 
 # The relationships of the application with services or other applications.
 #
@@ -123,6 +112,10 @@ hooks:
     #   - and if config files are present, `config-import`
     cd web
     bash $PLATFORM_APP_DIR/drush/platformsh_deploy_drupal.sh
+    ddev drush site:install --config-dir=../config/sync --account-name=admin --account-pass=123 -y
+    ddev drush theme:install gin -y
+    ddev drush config-set system.theme admin gin -y
+    ddev drush en admin_toolbar admin_toolbar_tools config_split security_review site_audit -y
 
 # The configuration of app when it is exposed to the web.
 web:
