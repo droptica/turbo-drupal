@@ -27,7 +27,7 @@
 		"drupal/gin": "^3.0@RC",
 		"drupal/security_review": "^3.0",
 		"drupal/site_audit": "^4.1",
-		"drush/drush": "^12"
+		"drush/drush": "^13"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
