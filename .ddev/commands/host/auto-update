@@ -39,6 +39,172 @@ composer_update() {
   fi
 }
 
+# Declare git commit function
+commit_changes() {
+  # Print debug command.
+  echo "${aqua}[Auto update] ${no_color}Running: ${yellow}git status${no_color}"
+
+  # Check if composer.lock was changed and grab full path to it from git status output.
+  git status | tee git_status_result.txt > /dev/null 2>&1
+  git_status_result=$(cat git_status_result.txt) && rm git_status_result.txt
+
+  # Check if we have changes inside composer.lock
+  if [[ ${git_status_result} =~ ([ ]+)(([a-zA-Z0-9_ \/\.\-]+\/)*composer\.lock) ]]; then
+    # Get lock file changes for variables.
+    composer_lock_file=${BASH_REMATCH[2]}
+    date=$(date '+%Y-%m-%d_%H-%M-%S')
+    update_branch_name="update/${date}"
+
+    # Try to run extra commands after update.
+  for site in "$@"; do
+      # Print debug command.
+      echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev drush updb -y -l \"${site}\"${no_color}"
+
+      # Run database update on current site.
+      (ddev drush updb -y -l "${site}" 2>&1 | tee drush_update_db_result.txt) > /dev/null 2>&1
+      drush_update_db_result=$(cat drush_update_db_result.txt)
+
+      # Check if we have success.
+      if
+        [[ ${drush_update_db_result} != *"[success] No pending updates."* ]] &&
+        [[ ${drush_update_db_result} != *"[success] Finished performing updates."* ]] &&
+        [ "${#drush_update_db_result}" -gt 0 ]
+      then
+        # If not print that and quit.
+        echo "${aqua}[Auto update] ${red}Database updates failed.${no_color}"
+        exit 1;
+      fi
+
+      # Remove logs from drush update db.
+      rm drush_update_db_result.txt
+
+      # Print debug command.
+      echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev drush cr -y -l \"${site}\"${no_color}"
+
+      # Final step, clear cache.
+      ddev drush cr -y -l "${site}" > /dev/null 2>&1
+
+      # Print debug command.
+      echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev drush cex -y -l \"${site}\"${no_color}"
+
+      # Final step, clear cache.
+      ddev drush cex -y -l "${site}" > /dev/null 2>&1
+    done
+
+    # Print debug command.
+    echo "${aqua}[Auto update] ${no_color}Running: ${yellow}git checkout && git add && git commit${no_color}"
+
+    # Create new branch, add updates files and commit them.
+    git checkout -B "${update_branch_name}" > /dev/null 2>&1
+    git add "*.yml" > /dev/null 2>&1
+    git add "composer.json" > /dev/null 2>&1
+    git add "${composer_lock_file}" > /dev/null 2>&1
+    git commit -m "${DDEV_SITENAME^}: Update ${date}" > /dev/null 2>&1
+
+    # Print success message.
+    echo "${aqua}[Auto update] ${lime}Auto update finished successfully.${no_color}"
+  else
+    # If we do not have any changes inside composer.lock print message.
+    echo "${aqua}[Auto update] ${red}Branch not created, because composer.lock file was not modified.${no_color}"
+  fi
+}
+
+# Declare git push function.
+push_changes() {
+  echo "${aqua}[Auto update] ${no_color}Running: ${yellow}git push --set-upstream origin "${update_branch_name}"${no_color}"
+  git push --set-upstream origin "${update_branch_name}"
+}
+
+# Declare function to checkout default origin branch.
+checkout_default_origin_branch() {
+  echo "${aqua}[Auto update] ${no_color}Running: ${yellow}git fetch${no_color}"
+  git fetch origin > /dev/null 2>&1
+
+  default_branch=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')
+
+  if [ -z "$default_branch" ]; then
+    echo "${red}[Error] ${no_color}Could not determine the default branch name.${no_color}"
+    return 1
+  fi
+
+  echo "${aqua}[Auto update] ${no_color}Running: ${yellow}git checkout ${default_branch}${no_color}"
+  git checkout $default_branch > /dev/null 2>&1
+
+  echo "${aqua}[Auto update] ${no_color}Running: ${yellow}git pull origin ${default_branch}${no_color}"
+  git pull origin $default_branch > /dev/null 2>&1
+
+  echo "${aqua}[Auto update] ${no_color}Successfully checked out and pulled latest code for ${default_branch}.${no_color}"
+}
+
+# Declare run ddev build.
+ddev_build() {
+  echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev download-data${no_color}"
+  ddev download-data > /dev/null 2>&1
+  for site in "$@"; do
+    echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev drush config:export -y -l \"${site}\" ${no_color}"
+    ddev drush config:export -y -l "${site}" > /dev/null 2>&1
+  done
+  echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev build${no_color}"
+  ddev build > /dev/null 2>&1
+}
+
+# Declare function to run tests.
+run_tests() {
+  if [[ -f ".ddev/commands/web/tests" ]]; then
+    echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev tests${no_color}"
+    ddev tests > tests_result.txt 2>&1
+    test_result=$(cat tests_result.txt) && rm tests_result.txt
+    if [[ ${test_result} == *"ERRORS!"* ]]; then
+      echo "${aqua}[Auto update] ${red}Tests failed. Aborting config export.${no_color}"
+      exit 1
+    fi
+    echo "${aqua}[Auto update] ${lime}Tests passed successfully.${no_color}"
+  else
+    echo "${aqua}[Auto update] ${yellow}No test script found. Skipping tests.${no_color}"
+  fi
+}
+
+# Declare function to export configuration.
+export_config() {
+  # Loop through each given site.
+  for site in "$@"; do
+    # Print what we are doing on which site.
+    echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev drush config:export -y -l \"${site}\" --commit --message=\"${DDEV_SITENAME^}: Config export\"${no_color}"
+    ddev drush config:export -y -l "${site}" --commit --message="${DDEV_SITENAME^}: Config export" > /dev/null 2>&1
+  done
+}
+
+# Declare platform function.
+platform_environment() {
+  CONFIG_FILE=".ddev/config.yaml"
+  echo "${aqua}[Auto update] ${no_color}Checking if is platform environment"
+
+  if grep -q "PLATFORM_PROJECT=" "$CONFIG_FILE"; then
+      echo "${aqua}[Auto update] ${yellow}PLATFORM_PROJECT ${no_color}env exists in config"
+
+      attempt=0
+      while [[ $attempt -lt 3 ]]; do
+          echo "${aqua}[Auto update] ${no_color}Running: ${yellow}platform environment:list${no_color}"
+          env_list=$(platform environment:list)
+
+          if echo "$env_list" | grep -q "${update_branch_name}"; then
+              echo "${aqua}[Auto update] ${no_color}Found ${yellow}${update_branch_name}${no_color} in environment list"
+              echo "${aqua}[Auto update] ${no_color}Running: ${yellow}platform environment:activate --environment ${update_branch_name}${no_color}"
+              platform environment:activate --environment "${update_branch_name}"
+              break
+          else
+              attempt=$((attempt + 1))
+              echo "${aqua}[Auto update] ${yellow}${update_branch_name}${no_color} not found in environment list. Attempt $attempt of 3."
+              if [[ $attempt -eq 3 ]]; then
+                  echo "${aqua}[Auto update] ${no_color}${yellow}Failed to find ${update_branch_name} after 3 attempts, skipping activation.${no_color}"
+              fi
+          fi
+      done
+  else
+      echo "${aqua}[Auto update] ${yellow}PLATFORM_PROJECT ${no_color}env doesn't exist in config, skipping"
+  fi
+}
+
 # Declare auto update function.
 auto_update() {
   # Prepare declaration.
@@ -128,73 +294,10 @@ auto_update() {
       composer_update "${packages_to_update[*]} --with-dependencies --no-interaction"
     fi
 
-    # Print debug command.
-    echo "${aqua}[Auto update] ${no_color}Running: ${yellow}git status${no_color}"
-
-    # Check if composer.lock was changed and grab full path to it from git status output.
-    git status | tee git_status_result.txt > /dev/null 2>&1
-    git_status_result=$(cat git_status_result.txt) && rm git_status_result.txt
-
-    # Check if we have changes inside composer.lock
-    if [[ ${git_status_result} =~ ([ ]+)(([a-zA-Z0-9_ \/\.\-]+\/)*composer\.lock) ]]; then
-      # Get lock file changes for variables.
-      composer_lock_file=${BASH_REMATCH[2]}
-      date=$(date '+%Y-%m-%d_%H-%M-%S')
-      update_branch_name="update/${date}"
-
-      # Try to run extra commands after update.
-      for site in ${1//,/ }; do
-        # Print debug command.
-        echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev drush updb -y -l \"${site}\"${no_color}"
-
-        # Run database update on current site.
-        (ddev drush updb -y -l "${site}" 2>&1 | tee drush_update_db_result.txt) > /dev/null 2>&1
-        drush_update_db_result=$(cat drush_update_db_result.txt)
-
-        # Check if we have success.
-        if
-          [[ ${drush_update_db_result} != *"[success] No pending updates."* ]] &&
-          [[ ${drush_update_db_result} != *"[success] Finished performing updates."* ]] &&
-          [ "${#drush_update_db_result}" -gt 0 ]
-        then
-          # If not print that and quit.
-          echo "${aqua}[Auto update] ${red}Database updates failed.${no_color}"
-          exit 1;
-        fi
-
-        # Remove logs from drush update db.
-        rm drush_update_db_result.txt
-
-        # Print debug command.
-        echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev drush cr -y -l \"${site}\"${no_color}"
-
-        # Final step, clear cache.
-        ddev drush cr -y -l "${site}" > /dev/null 2>&1
-
-        # Print debug command.
-        echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev drush cex -y -l \"${site}\"${no_color}"
-
-        # Final step, clear cache.
-        ddev drush cex -y -l "${site}" > /dev/null 2>&1
-      done
-
-      # Print debug command.
-      echo "${aqua}[Auto update] ${no_color}Running: ${yellow}git checkout && git add && git commit${no_color}"
-
-      # Create new branch, add updates files and commit them.
-      git checkout -B "${update_branch_name}" > /dev/null 2>&1
-      git add "*.yml" > /dev/null 2>&1
-      git add "composer.json" > /dev/null 2>&1
-      git add "${composer_lock_file}" > /dev/null 2>&1
-      git commit -m "${DDEV_SITENAME^}: Update ${date}" > /dev/null 2>&1
-      git push --set-upstream origin "${update_branch_name}"
-
-      # Print success message.
-      echo "${aqua}[Auto update] ${lime}Auto update finished successfully.${no_color}"
-    else
-      # If we do not have any changes inside composer.lock print message.
-      echo "${aqua}[Auto update] ${red}Branch not created, because composer.lock file was not modified.${no_color}"
-    fi
+    run_tests
+    commit_changes
+    push_changes
+#    platform_environment
   else
     # Print proper message if we do not have security updates.
     echo "${aqua}[Auto update] ${lime}No security updates available.${no_color}"
@@ -214,4 +317,6 @@ fi
 echo "${aqua}[Auto update] ${lime}Running auto-update${no_color} script on those sites: ${yellow}${sites_to_update}${no_color}."
 
 # Run auto_update function with all given sites.
+checkout_default_origin_branch
+ddev_build ${sites_to_update}
 auto_update ${sites_to_update}
