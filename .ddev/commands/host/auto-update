@@ -138,8 +138,12 @@ checkout_default_origin_branch() {
 
 # Declare run ddev build.
 ddev_build() {
+  echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev start${no_color}"
+  ddev start > /dev/null 2>&1
   echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev download-data${no_color}"
   ddev download-data > /dev/null 2>&1
+  echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev db-restore${no_color}"
+  ddev  db-restore > /dev/null 2>&1
   for site in "$@"; do
     echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev drush config:export -y -l \"${site}\" ${no_color}"
     ddev drush config:export -y -l "${site}" > /dev/null 2>&1
