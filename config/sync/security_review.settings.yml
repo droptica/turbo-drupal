@@ -1,0 +1,17 @@
+_core:
+  default_config_hash: 62GMsnqB8RjxdgNyxCGrnNjjxDft8qnQQIWXU9YbUbw
+untrusted_roles:
+  - anonymous
+  - authenticated
+log: false
+skipped: {  }
+views_access:
+  ignore_default: false
+upload_extensions:
+  hush_upload_extensions: {  }
+fields:
+  known_risky_fields: {  }
+file_permissions:
+  hushed_files: {  }
+headers:
+  headers_to_check: {  }
