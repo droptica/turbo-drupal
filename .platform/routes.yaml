@@ -5,7 +5,7 @@
 
 "https://{default}/":
   type: upstream
-  upstream: "app:http"
+  upstream: "turbo-drupal:http"
   cache:
     enabled: true
     # Base the cache on the session cookie and custom Drupal cookies. Ignore all other cookies.
