@@ -3198,16 +3198,16 @@
         },
         {
             "name": "platformsh/config-reader",
-            "version": "3.0.0",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/platformsh/config-reader-php.git",
-                "reference": "f7bd00903c12f24b2029c5e8120780a8cfbeb16d"
+                "reference": "cab2b6c0cdfc318df09a64136957dc1fc308f418"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/platformsh/config-reader-php/zipball/f7bd00903c12f24b2029c5e8120780a8cfbeb16d",
-                "reference": "f7bd00903c12f24b2029c5e8120780a8cfbeb16d",
+                "url": "https://api.github.com/repos/platformsh/config-reader-php/zipball/cab2b6c0cdfc318df09a64136957dc1fc308f418",
+                "reference": "cab2b6c0cdfc318df09a64136957dc1fc308f418",
                 "shasum": ""
             },
             "require": {
@@ -3235,9 +3235,9 @@
             "description": "Small helper to access Platform.sh environment variables",
             "support": {
                 "issues": "https://github.com/platformsh/config-reader-php/issues",
-                "source": "https://github.com/platformsh/config-reader-php/tree/3.0.0"
+                "source": "https://github.com/platformsh/config-reader-php/tree/3.0.1"
             },
-            "time": "2024-11-22T19:35:31+00:00"
+            "time": "2025-02-25T17:22:15+00:00"
         },
         {
             "name": "psr/cache",
@@ -9575,10 +9575,10 @@
     },
     "prefer-stable": true,
     "prefer-lowest": false,
-    "platform": {},
-    "platform-dev": {},
+    "platform": [],
+    "platform-dev": [],
     "platform-overrides": {
         "php": "8.2"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
