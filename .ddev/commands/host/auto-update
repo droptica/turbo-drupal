@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Get the update mode from first argument, default to updates
+mode=${1:-updates}
 # Disable commands dynamic path.
 # shellcheck disable=SC2154
 
@@ -244,10 +246,10 @@ auto_update() {
 
     # Print what we gonna do.
     echo "${aqua}[Auto update] ${no_color}Gather info about packages that need to be updated..."
-    echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev php \"${updates_check_script_path}\" \"${site}\" \"${app_path}\"${no_color}"
+    echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev php \"${updates_check_script_path}\" \"${site}\" \"${app_path}\" \"${mode}\"${no_color}"
 
     # Run update test on given site.
-    updates_check_result=$(ddev php "${updates_check_script_path}" "${site}" "${app_path}" | tail -n1)
+    updates_check_result=$(ddev php "${updates_check_script_path}" "${site}" "${app_path}" "${mode}" | tail -n1)
 
     # Check if results does actually contain anything.
     if [[ ${updates_check_result} =~ (<<)(.*)(>>) ]]; then
@@ -309,7 +311,7 @@ auto_update() {
 }
 
 # Get all sites that user requested.
-sites_to_update=${@:1}
+sites_to_update=${@:2}
 
 # Check if we actually have any site.
 if [[ -z ${sites_to_update+x} || -z ${sites_to_update} ]]; then
