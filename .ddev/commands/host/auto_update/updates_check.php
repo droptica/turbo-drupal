@@ -12,9 +12,6 @@ try {
   $site = $argv[1] ?? 'default';
   $app_path = sprintf('./%s', $argv[2] ?? '/web');
 
-  echo $site . '\n\n';
-  echo $app_path . '\n\n';
-
   // Get to current path.
   chdir($app_path);
 
@@ -28,6 +25,12 @@ try {
   Settings::initialize($kernel->getAppRoot(), $kernel->getSitePath(), $autoloader);
   $kernel->boot();
   $kernel->preHandle($request);
+
+  // Set sensitivity of updates.
+  $mode = match($argv[3] ?? 'updates') {
+    'security' => UpdateManagerInterface::NOT_SECURE,
+    default => UpdateManagerInterface::NOT_CURRENT
+  };
 
   // Update data.
   update_refresh();
@@ -43,7 +46,7 @@ try {
   // Loop through each module.
   foreach ($project_data as $project) {
     // Check if that module status is equal to not secure.
-    if ($project['status'] === UpdateManagerInterface::NOT_SECURE) {
+    if ($project['status'] === $mode) {
       // If so then add it to array.
       $not_secure_projects[] = $project['name'] === 'drupal' ? 'drupal/core' : "drupal/{$project['name']}";
     }
