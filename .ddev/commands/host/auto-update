@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+## Description: Run security updates via composer, drush updb/cex, then commit and push to a new update/* branch.
+## Usage: auto-update [--dry-run|-n] [--no-commit] [--branch|-b <name>] [site ...]
+## Example: "ddev auto-update", "ddev auto-update --dry-run" or "ddev auto-update -b feature/PROJ-123-security-updates --no-commit"
+
 # Disable commands dynamic path.
 # shellcheck disable=SC2154
 
@@ -19,7 +23,12 @@ composer_update() {
   echo "${aqua}[Auto update] ${no_color}Running: ${yellow}ddev composer update $1${no_color}"
 
   # Run ddev composer update on all available updates.
-  (ddev composer update $1 | tee composer_update_result.txt) > /dev/null 2>&1
+  # In dry-run mode show composer output, since it is the only result of the run.
+  if [[ ${dry_run} == true ]]; then
+    ddev composer update $1 2>&1 | tee composer_update_result.txt
+  else
+    (ddev composer update $1 | tee composer_update_result.txt) > /dev/null 2>&1
+  fi
 
   # Get update result.
   composer_update_result=$(cat composer_update_result.txt) && rm composer_update_result.txt
@@ -53,7 +62,8 @@ commit_changes() {
     # Get lock file changes for variables.
     composer_lock_file=${BASH_REMATCH[2]}
     date=$(date '+%Y-%m-%d_%H-%M-%S')
-    update_branch_name="update/${date}"
+    update_branch_name="${branch_name:-update/${date}}"
+    commit_message="${DDEV_SITENAME^}: Update ${date}"
 
     # Try to run extra commands after update.
   for site in "$@"; do
@@ -92,14 +102,38 @@ commit_changes() {
     done
 
     # Print debug command.
-    echo "${aqua}[Auto update] ${no_color}Running: ${yellow}git checkout && git add && git commit${no_color}"
+    echo "${aqua}[Auto update] ${no_color}Running: ${yellow}git checkout \"${update_branch_name}\" && git add${no_color}"
 
-    # Create new branch, add updates files and commit them.
-    git checkout -B "${update_branch_name}" > /dev/null 2>&1
+    # Switch to existing branch instead of -B, which would reset it and drop task commits.
+    if git show-ref --verify --quiet "refs/heads/${update_branch_name}"; then
+      checkout_args=("${update_branch_name}")
+    else
+      checkout_args=(-b "${update_branch_name}")
+    fi
+    if ! git checkout "${checkout_args[@]}" > /dev/null 2>&1; then
+      echo "${aqua}[Auto update] ${red}Could not switch to branch \"${update_branch_name}\". Changes left uncommitted on current branch.${no_color}"
+      exit 1
+    fi
+
+    # Stage updated files.
     git add "*.yml" > /dev/null 2>&1
     git add "composer.json" > /dev/null 2>&1
     git add "${composer_lock_file}" > /dev/null 2>&1
-    git commit -m "${DDEV_SITENAME^}: Update ${date}" > /dev/null 2>&1
+
+    # Leave staged changes for manual review - push without a commit would be pointless.
+    if [[ ${no_commit} == true ]]; then
+      echo "${aqua}[Auto update] ${lime}Auto update finished. Changes staged on branch \"${update_branch_name}\", commit and push skipped.${no_color}"
+      echo "${aqua}[Auto update] ${no_color}Proposed commit message: ${yellow}${commit_message}${no_color}"
+      echo "${aqua}[Auto update] ${no_color}To commit and push run:"
+      echo "  git commit -m \"${commit_message}\" && git push --set-upstream origin \"${update_branch_name}\""
+      return
+    fi
+
+    # Print debug command.
+    echo "${aqua}[Auto update] ${no_color}Running: ${yellow}git commit${no_color}"
+
+    git commit -m "${commit_message}" > /dev/null 2>&1
+    changes_committed=true
 
     # Print success message.
     echo "${aqua}[Auto update] ${lime}Auto update finished successfully.${no_color}"
@@ -111,6 +145,11 @@ commit_changes() {
 
 # Declare git push function.
 push_changes() {
+  # Nothing to push when composer.lock was unchanged or --no-commit was used.
+  if [[ ${changes_committed} != true ]]; then
+    return
+  fi
+
   echo "${aqua}[Auto update] ${no_color}Running: ${yellow}git push --set-upstream origin "${update_branch_name}"${no_color}"
   git push --set-upstream origin "${update_branch_name}"
 }
@@ -285,7 +324,7 @@ auto_update() {
       # Check if core-recommend was found.
       if [[ ${drupal_core_recommended} != *"Package drupal/core-recommended not found"* ]]; then
         # If so then run all core-* updates.
-        composer_update "drupal/core-* --with-all-dependencies --no-interaction --no-dev"
+        composer_update "drupal/core-* --with-all-dependencies --no-interaction --no-dev${composer_dry_run_flag}"
 
         # Remove drupal/core from the list, since the update for it was already executed.
         unset packages_to_update["drupal/core"]
@@ -295,11 +334,17 @@ auto_update() {
     # Update all other packages for which update is needed.
     if [[ -n "${packages_to_update[*]}" ]]; then
       # Run the same command as for drupal/core.
-      composer_update "${packages_to_update[*]} --with-dependencies --no-interaction"
+      composer_update "${packages_to_update[*]} --with-dependencies --no-interaction${composer_dry_run_flag}"
+    fi
+
+    # Dry run stops here - no tests, drush updb/cex, branch, commit or push.
+    if [[ ${dry_run} == true ]]; then
+      echo "${aqua}[Auto update] ${lime}Dry run finished. No changes were made to composer files, database, config or git.${no_color}"
+      return
     fi
 
     run_tests
-    commit_changes
+    commit_changes "$@"
     push_changes
 #    platform_environment
   else
@@ -308,8 +353,45 @@ auto_update() {
   fi
 }
 
-# Get all sites that user requested.
-sites_to_update=${@:1}
+# Parse flags, everything else is treated as a site name.
+dry_run=false
+no_commit=false
+changes_committed=false
+branch_name=""
+composer_dry_run_flag=""
+sites_to_update=""
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --dry-run|-n)
+      dry_run=true
+      composer_dry_run_flag=" --dry-run"
+      ;;
+    --no-commit)
+      no_commit=true
+      ;;
+    --branch=*)
+      branch_name=${1#*=}
+      ;;
+    --branch|-b)
+      if [[ -z $2 || $2 == -* ]]; then
+        echo "${aqua}[Auto update] ${red}Option $1 requires a branch name.${no_color}"
+        exit 1
+      fi
+      branch_name=$2
+      shift
+      ;;
+    *)
+      sites_to_update="${sites_to_update:+${sites_to_update} }$1"
+      ;;
+  esac
+  shift
+done
+
+# Fail early on invalid branch name, before composer/drush make any changes.
+if [[ -n ${branch_name} ]] && ! git check-ref-format --branch "${branch_name}" > /dev/null 2>&1; then
+  echo "${aqua}[Auto update] ${red}Invalid branch name: \"${branch_name}\".${no_color}"
+  exit 1
+fi
 
 # Check if we actually have any site.
 if [[ -z ${sites_to_update+x} || -z ${sites_to_update} ]]; then
@@ -320,7 +402,21 @@ fi
 # Print proper message if we do not have security updates.
 echo "${aqua}[Auto update] ${lime}Running auto-update${no_color} script on those sites: ${yellow}${sites_to_update}${no_color}."
 
+if [[ ${dry_run} == true ]]; then
+  echo "${aqua}[Auto update] ${yellow}Dry run mode: composer update --dry-run only, branch checkout, ddev build and git steps are skipped.${no_color}"
+fi
+if [[ -n ${branch_name} && ${dry_run} != true ]]; then
+  echo "${aqua}[Auto update] ${yellow}Target branch: ${branch_name}${no_color}"
+fi
+if [[ ${no_commit} == true && ${dry_run} != true ]]; then
+  echo "${aqua}[Auto update] ${yellow}No-commit mode: changes will be staged only, commit and push are skipped.${no_color}"
+fi
+
+# Dry run works on current code and DB - no default branch checkout, data download or DB restore.
+if [[ ${dry_run} != true ]]; then
+  checkout_default_origin_branch
+  ddev_build ${sites_to_update}
+fi
+
 # Run auto_update function with all given sites.
-checkout_default_origin_branch
-ddev_build ${sites_to_update}
 auto_update ${sites_to_update}
